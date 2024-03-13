@@ -145,3 +145,6 @@ span.psw {
   vertical-align: bottom;
   white-space: nowrap;
 }
+.toast-container {
+  width: 400px; /* Set the desired width here */
+}

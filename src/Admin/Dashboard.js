@@ -10,7 +10,7 @@ import Leftpanal from "./Leftpanal";
 
 
 const Dashboard = () => {
-    const columns = ["Name", "Company", "City", "State",{
+    const columns = ["Date", "Name", "Email", "Status","Action",{
         options:{
         customBodyRenderLite: (dataIndex, rowIndex) => {
             return (
@@ -26,10 +26,7 @@ const Dashboard = () => {
           }
     } }];
     const data = [
-        ["Joe Jamesfdfdfdfdfdf", "Test Corpdfdfdfdf", "Yonkedfdfdfdrs", "NdfdfdfdfdffdfY"],
-        ["John Walsh", "Test Corp", "Hartford", "CT"],
-        ["Bob Herm", "Test Corp", "Tampa", "FL"],
-        ["James Houston", "Test Corp", "Dallas", "TX"],
+        ["25-02-2012", "Jayesh", "jayesh@gmail.com", "Active"],
        ];
     
        const options = {
