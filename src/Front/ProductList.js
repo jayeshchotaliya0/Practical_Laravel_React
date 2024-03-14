@@ -15,20 +15,17 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 const ProductList = () => {
-    let { id } = useParams();
+  let { id } = useParams();
 
   const [categories, setCategories] = useState([]);
 
   useEffect(() => {
-    // fetch(`https://fakestoreapi.com/products/${id}`)
     fetch(`https://fakestoreapi.com/products`)
       .then(response => response.json())
       .then(data => setCategories(data))
       .catch(error => console.error('Error fetching categories:', error));
   }, []);
   
-  console.log("categories",id);
-
   return (
     <>
       <div class="container">
@@ -50,7 +47,6 @@ const ProductList = () => {
                         <b>{v.price}</b>
                       </Link>
                     </Grid>
-                   
                 </>
               )
             })

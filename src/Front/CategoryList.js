@@ -4,6 +4,7 @@ import { styled } from '@mui/material/styles';
 import Paper from '@mui/material/Paper';
 import { Link } from "react-router-dom";
 import LazyLoad from 'react-lazyload';
+import APP_URL from "../envorment";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -17,9 +18,9 @@ const CategoryList = () => {
   const [categories, setCategories] = useState([]);
 
   useEffect(() => {
-    fetch('https://fakestoreapi.com/products')
+    fetch(`${APP_URL}/categorie_act`)
       .then(response => response.json())
-      .then(data => setCategories(data))
+      .then(data => setCategories(data.data))
       .catch(error => console.error('Error fetching categories:', error));
   }, []);
   
@@ -33,17 +34,15 @@ const CategoryList = () => {
             categories.map(function(v,i){
               return(
                 <>
-                    <Grid item xs={3}>
+                    <Grid item xs={6}>
                       <Item>
-                        <LazyLoad height={10} width={20} once>
                         <Link to={`/product/${v.id}`}>
-                            <img src={v.image} alt="Lazy Loaded Image" style={{height:'100px'}} />
+                            <img src={`${process.env.REACT_APP_API_URL}${v.image}`} alt="Lazy Loaded Image" style={{height:'200px'}} />
                         </Link>  
-                      </LazyLoad>
                       </Item>
                       <Link to={`/product/${v.id}`}>
-                        <p>{v.category}</p>
-                        <b>{v.price}</b>
+                        <p>{v.title}</p>
+                        <b>{v.description}</b>
                       </Link>
                     </Grid>
                    

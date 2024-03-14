@@ -10,98 +10,105 @@ import Leftpanal from "../Leftpanal";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from 'axios';
+import APP_URL from "../../envorment"
 
 const Category = () => {
+  
   const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
   const [deletedata, setDeletedata] = useState(false);
 
-    const columns = ["Id","Date","Image", "title", "status","Action",{
-        options:{
-          customBodyRender: (value, tableMeta, updateValue) => {
-            if (value) { 
-              return (
-                  <img  src={value} alt="Category" style={{width: "100px", height: "100px"}} />
-              );
-          } else {
-              return null;
-          }
-        },
-        customBodyRenderLite: (dataIndex, rowIndex) => {
-            return (
-                <>
-                    <IconButton aria-label="delete" onClick={() => handleDelete(dataIndex,rowIndex)}>
-                        <DeleteIcon />
-                    </IconButton>
-                    <IconButton aria-label="edit" onClick={() => handleEdit(dataIndex,rowIndex)}>
-                        <EditIcon />
-                    </IconButton>
-                </>
-            );
-          }
-          
-    }}];
-  
-    const options = {
-      filter: false,
-      selectableRows: 'none', 
-      download: false,
-      search: true,
-      print: false,
-      viewColumns: false,
-    };
 
+  const columns = [
+    {
+      name: "id",
+    },
+    {
+      name: "Image",
+      options: {
+        customBodyRender: (value) => <img src={`${process.env.REACT_APP_API_URL}${value}`} alt="image" style={{ width: '100px', height: '100px' }} />,
+      }
+    },
+    {
+      name: "Title",
+    },
+    {
+      name: "Status",
+    },
+    {
+      name: "Date",
+    },
+    {
+      name: "Action",
+      options: {
+        customBodyRender: (value, tableMeta) => {
+          const id = tableMeta.rowData[0];
+          return (
+            <>
+                <IconButton aria-label="delete" onClick={() => handleDelete(id)}>
+                    <DeleteIcon />
+                </IconButton>
+                <IconButton aria-label="edit" onClick={() => handleEdit(id)}>
+                    <EditIcon />
+                </IconButton>
+            </>
+            )
+        } 
+      }
+    },
+  ];
+
+  const options = {
+    filter: false,
+    selectableRows: 'none', 
+    download: false,
+    search: true,
+    print: false,
+    viewColumns: false,
+  };
 
   useEffect(() => {
-    fetch('http://localhost:8000/api/categories')
+    fetch(`${APP_URL}/categories`)
       .then(response => response.json())
       .then(data => setCategories(data.data))
       .catch(error => console.error('Error fetching categories:', error));
+      setDeletedata(false);
   }, [deletedata]);
 
   const Data = categories.map(item => [
     item.id,
-    item.created_at.substring(0, 10),
     item.image,
     item.title,
     item.status==1?'Active':'Inactive',
+    item?.created_at?.substring(0, 10) 
   ]);
-
-  const handleDelete = async(dataIndex,rowIndex) => {
-    try {
-      const response = await axios.delete(`http://localhost:8000/api/category_delete/${Data[dataIndex][0]}`, {
-      });
-      console.log("responseresponse",response);
-      if(response.data)
-      {
-        setDeletedata(true);
-        toast.success(response.data.message, {
-          position: "top-center",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
+ 
+  const handleDelete = async(id) => {
+      try {
+        const response = await axios.delete(`${APP_URL}/category_delete/${id}`, {
         });
-      }
-
-      // setDeleteStatus(response.data.message);
-      // Assuming the API returns a message
-  } catch (error) {
-      console.error('Error deleting data:', error);
-      // setDeleteStatus('Error deleting data. Please try again.');
-  }
+        if(response.data)
+        {
+          setDeletedata(true);
+          toast.success(response.data.message, {
+            position: "top-center",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+          });
+        }
+    } catch (error) {
+        console.error('Error deleting data:', error);
+    }
   };
 
-  const handleEdit = (dataIndex,rowIndex ) => {
-    const categoryid = Data[dataIndex][0];
-    alert(categoryid);
-    navigate(`/category/${categoryid}`);
-  
+  const handleEdit = (id) => {
+    navigate(`/editcategory/${id}`);
   };
-  
-
+ 
   return (
     <>
       <Leftpanal />
@@ -121,7 +128,7 @@ const Category = () => {
         </div>
           <ToastContainer
             position="top-right"
-            autoClose={5000}
+            autoClose={200}
             hideProgressBar={false}
             newestOnTop={false}
             closeOnClick
@@ -130,7 +137,7 @@ const Category = () => {
             draggable
             pauseOnHover
           />
-</div>
+    </div>
     </>
   );
 };
