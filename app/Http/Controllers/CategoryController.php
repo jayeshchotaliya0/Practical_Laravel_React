@@ -33,13 +33,24 @@ class CategoryController extends Controller
     public function update(Request $request,Category $category)
     {
         $image = $request->file('image');
-        $name = time().'.'.$image->getClientOriginalExtension();
-        $destinationPath = public_path('/images/categories');
-        $image->move($destinationPath,$name);
 
+        if ($image != null) {
+            $name = time().'.'.$image->getClientOriginalExtension();
+            $destinationPath = public_path('/images/categories');
+            $image->move($destinationPath,$name);
+        } else {
+            $name = null;
+        }
+        
+        
         $category->title = $request->title;
         $category->description = $request->description;
-        $category->image = $name;
+        $category->status = $request->status;
+        if ($name != null) {
+            $category->image = $name;
+        }
+        
+        
         $category->update();
 
         if($category){
@@ -51,11 +62,46 @@ class CategoryController extends Controller
     }
 
     public function categories(){
-        $category = Category::all();
+
+        $category = Category::orderBy('id', 'desc')->get();
         if($category){
             return Response::json([
                 'status' => '200',
                 'message' => 'Category list get successfully',
+                'data' => $category
+            ], 200);
+        }else{
+            return Response::json([
+                'status' => '404',
+                'message' => 'Category data not found'
+            ], 404);
+        }
+    }
+
+    public function categorie_act()
+    {
+        $category = Category::where('status', 1)->orderBy('title', 'asc')->get();
+        if($category){
+            return Response::json([
+                'status' => '200',
+                'message' => 'Category list get successfully',
+                'data' => $category
+            ], 200);
+        }else{
+            return Response::json([
+                'status' => '404',
+                'message' => 'Category data not found'
+            ], 404);
+        }
+    }
+
+    public function categorie($id){
+        
+        $category = Category::find($id);
+        if($category){
+            return Response::json([
+                'status' => '200',
+                'message' => 'Category get successfully',
                 'data' => $category
             ], 200);
         }else{
